@@ -1264,11 +1264,11 @@ public class Home extends javax.swing.JFrame {
 
         jLabel39.setText("Teacher Address  :- ");
         jPanel12.add(jLabel39);
-        jLabel39.setBounds(77, 158, 104, 16);
+        jLabel39.setBounds(77, 158, 110, 16);
 
         jLabel40.setText("Teacher Gender  :-");
         jPanel12.add(jLabel40);
-        jLabel40.setBounds(77, 198, 97, 16);
+        jLabel40.setBounds(77, 198, 100, 16);
         jPanel12.add(jTextField37);
         jTextField37.setBounds(650, 120, 227, 22);
 
@@ -1277,7 +1277,7 @@ public class Home extends javax.swing.JFrame {
         jRadioButton1.setText("Male ");
         jRadioButton1.setActionCommand("1");
         jPanel12.add(jRadioButton1);
-        jRadioButton1.setBounds(187, 198, 53, 21);
+        jRadioButton1.setBounds(187, 198, 60, 21);
 
         buttonGroup1.add(jRadioButton2);
         jRadioButton2.setText("Female");
@@ -1556,7 +1556,7 @@ public class Home extends javax.swing.JFrame {
             }
         });
         AddSubjectPanel.add(jTextField5);
-        jTextField5.setBounds(90, 400, 65, 22);
+        jTextField5.setBounds(90, 400, 64, 22);
 
         jLabel16.setText("Select Subject  :-");
         AddSubjectPanel.add(jLabel16);
@@ -2548,15 +2548,27 @@ public class Home extends javax.swing.JFrame {
             String nic = jTextField11.getText();
             String gender = String.valueOf(jComboBox5.getSelectedItem());
             String result = (gender.equals("Male")) ? "1" : "2";
-            System.out.println(result);
 
-            MySQL.Iud("INSERT INTO "
-                    + "`student`(`firstName`,`lastName`,`dob`,`address`,`mobile`,`nic`,`gender_id`) "
-                    + "VALUES('" + firstName + "','" + lastName + "','" + dob + "','" + address + "',"
-                    + "'" + mobile + "','" + nic + "','" + result + "')");
+            try {
+                ResultSet resultSet = MySQL.Search("SELECT * FROM `student` WHERE `nic`='" + nic + "' ");
 
-            loadStudentsTable();
-            ManageStudentFieldReset();
+                if (resultSet.next()) {
+                    Alert("This Student Already Exist", false);
+
+                } else {
+                    MySQL.Iud("INSERT INTO "
+                            + "`student`(`firstName`,`lastName`,`dob`,`address`,`mobile`,`nic`,`gender_id`) "
+                            + "VALUES('" + firstName + "','" + lastName + "','" + dob + "','" + address + "',"
+                            + "'" + mobile + "','" + nic + "','" + result + "')");
+
+                    loadStudentsTable();
+                    ManageStudentFieldReset();
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         } else {
             Alert(fieldStatus, true);
@@ -2650,37 +2662,39 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox5ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
         String status = validateTeacherField();
         if (status.equals("Success")) {
             String subjectName = String.valueOf(jComboBox6.getSelectedItem());
 
             try {
+                ResultSet resultSet = MySQL.Search("SELECT * FROM `teacher` WHERE `nic`='" + jTextField38.getText() + "' ");
 
-                ResultSet result = MySQL.Search("SELECT * FROM `subject` WHERE `description`='" + subjectName + "' ");
+                if (resultSet.next()) {
+                    Alert("This Teacher Already Exist", false);
 
-                if (result.next()) {
-                    MySQL.Iud("INSERT INTO `teacher`"
-                            + "(`firstName`,`lastName`,`mobile`,`nic`,`address`,`gender_id`,`subject_subno`)"
-                            + "VALUES"
-                            + "('" + jTextField35.getText() + "','" + jTextField27.getText() + "',"
-                            + "'" + jTextField37.getText() + "',"
-                            + "'" + jTextField38.getText() + "','" + jTextField36.getText() + "',"
-                            + "'" + Integer.valueOf(buttonGroup1.getSelection().getActionCommand()) + "',"
-                            + "'" + result.getInt("subno") + "')");
+                } else {
+                    ResultSet result = MySQL.Search("SELECT * FROM `subject` WHERE `description`='" + subjectName + "' ");
 
-                    ManageTeacherFieldReset();
-                    loadTeachersTable();
+                    if (result.next()) {
+                        MySQL.Iud("INSERT INTO `teacher`"
+                                + "(`firstName`,`lastName`,`mobile`,`nic`,`address`,`gender_id`,`subject_subno`)"
+                                + "VALUES"
+                                + "('" + jTextField35.getText() + "','" + jTextField27.getText() + "',"
+                                + "'" + jTextField37.getText() + "',"
+                                + "'" + jTextField38.getText() + "','" + jTextField36.getText() + "',"
+                                + "'" + Integer.valueOf(buttonGroup1.getSelection().getActionCommand()) + "',"
+                                + "'" + result.getInt("subno") + "')");
+
+                        ManageTeacherFieldReset();
+                        loadTeachersTable();
+                    }
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         } else {
             Alert(status, true);
         }
-
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
