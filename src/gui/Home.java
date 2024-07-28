@@ -2536,9 +2536,7 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_jPanel10MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
         String fieldStatus = valdateStudentsFields();
-
         if (fieldStatus.equals("Success")) {
             String firstName = jTextField1.getText();
             String lastName = jTextField2.getText();
@@ -2563,13 +2561,10 @@ public class Home extends javax.swing.JFrame {
 
                     loadStudentsTable();
                     ManageStudentFieldReset();
-
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         } else {
             Alert(fieldStatus, true);
         }
